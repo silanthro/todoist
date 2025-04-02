@@ -18,6 +18,7 @@ class Task(TypedDict):
 def create_task(
     title: str,
     description: str = "",
+    due_string: Optional[str] = None,
     due_date: Optional[str] = None,
     priority: Literal[1, 2, 3, 4] = 1,
 ) -> str:
@@ -27,19 +28,26 @@ def create_task(
     Args:
     - title (str): Title of task
     - description (str): Description of task, defaults to empty string
-    - due_date (Optional[str]): Task due date in YYYY-MM-DD format, defaults to None
+    - due_string (Optional[str]): Task due date in natural language e.g. "today", "tomorrow", defaults to None
+    - due_date (Optional[str]): Task due date in YYYY-MM-DD format, defaults to None, ignored if due_string is provided
     - priority (int): A priority level from 1 to 4, defaults to 1
 
     Returns:
         A string "Task added"
     """
     API = TodoistAPI(os.getenv("TODOIST_API_TOKEN"))
-    API.add_task(
-        content=title,
-        description=description,
-        due_date=due_date,
-        priority=priority,
-    )
+    kwargs = {
+        "content": title,
+        "description": description,
+        "priority": priority,
+    }
+    if due_date is not None:
+        kwargs["due_date"] = due_date
+    if due_string is not None:
+        if "due_date" in kwargs:
+            del kwargs["due_date"]
+        kwargs["due_string"] = due_string
+    API.add_task(**kwargs)
     return "Task added"
 
 
@@ -109,6 +117,7 @@ def update_task(
     task_id: str,
     title: Optional[str] = None,
     description: Optional[str] = None,
+    due_string: Optional[str] = None,
     due_date: Optional[str] = None,
     labels: Optional[list[str]] = None,
     priority: Optional[Literal[1, 2, 3, 4]] = None,
@@ -120,7 +129,8 @@ def update_task(
     - task_id (str): Task ID to update
     - title (Optional[str]): Use this to update the task title
     - description (Optional[str]): Use this to update the task description
-    - due_date (Optional[str]): Use this to update the task due date with string as YYYY-MM-DD
+    - due_string (Optional[str]): Task due date in natural language e.g. "today", "tomorrow", defaults to None
+    - due_date (Optional[str]): Task due date in YYYY-MM-DD format, defaults to None, ignored if due_string is provided
     - labels (Optional[list[str]]): Use this to update the task labels with list of strings
     - priority (Optional[Literal[1,2,3,4]]): Use this to update the task priority with an integer from 1 to 4, where 1 indicates highest priority
 
@@ -133,12 +143,17 @@ def update_task(
         kwargs["content"] = title
     if description is not None:
         kwargs["description"] = description
-    if due_date is not None:
-        kwargs["due_date"] = due_date
     if labels is not None:
         kwargs["labels"] = labels
     if priority is not None:
         kwargs["priority"] = priority
+
+    if due_date is not None:
+        kwargs["due_date"] = due_date
+    if due_string is not None:
+        if "due_date" in kwargs:
+            del kwargs["due_date"]
+        kwargs["due_string"] = due_string
     API.update_task(
         task_id=task_id,
         **kwargs,
