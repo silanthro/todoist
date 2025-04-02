@@ -1,0 +1,11 @@
+[index]
+
+description = "Tools for interacting with Todoist tasks"
+
+tools = [
+    "todoist.create_task",
+    "todoist.get_tasks",
+    "todoist.update_task",
+    "todoist.complete_task",
+    "todoist.delete_task",
+]
