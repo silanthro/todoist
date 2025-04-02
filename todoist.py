@@ -107,31 +107,41 @@ def get_tasks(
 
 def update_task(
     task_id: str,
-    update_kwargs: dict,
+    title: Optional[str] = None,
+    description: Optional[str] = None,
+    due_date: Optional[str] = None,
+    labels: Optional[list[str]] = None,
+    priority: Optional[Literal[1, 2, 3, 4]] = None,
 ) -> str:
     """
     Update a task
 
     Args:
     - task_id (str): Task ID to update
-    - update_kwargs: A dictionary with the attributes to update, see below for accepted attributes
-        - title (str): Update title of task e.g. {"title": "New title"}
-        - description (str): Update description of task
-        - due_date (str): Update due date of task with string as YYYY-MM-DD
-        - labels (list[str]): Update task labels with list of strings
-        - priority (int): Update task priority with an integer from 1 to 4, where 1 indicates highest priority
+    - title (Optional[str]): Use this to update the task title
+    - description (Optional[str]): Use this to update the task description
+    - due_date (Optional[str]): Use this to update the task due date with string as YYYY-MM-DD
+    - labels (Optional[list[str]]): Use this to update the task labels with list of strings
+    - priority (Optional[Literal[1,2,3,4]]): Use this to update the task priority with an integer from 1 to 4, where 1 indicates highest priority
 
     Returns:
         A string "Task updated"
     """
     API = TodoistAPI(os.getenv("TODOIST_API_TOKEN"))
-    # Rename "title" to "content"
-    if "title" in update_kwargs:
-        update_kwargs["content"] = update_kwargs["title"]
-        del update_kwargs["title"]
+    kwargs = {}
+    if title is not None:
+        kwargs["content"] = title
+    if description is not None:
+        kwargs["description"] = description
+    if due_date is not None:
+        kwargs["due_date"] = due_date
+    if labels is not None:
+        kwargs["labels"] = labels
+    if priority is not None:
+        kwargs["priority"] = priority
     API.update_task(
         task_id=task_id,
-        **update_kwargs,
+        **kwargs,
     )
     return "Task updated"
 
