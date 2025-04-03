@@ -163,17 +163,17 @@ def update_task(
 
 def close_task(task_id: str) -> str:
     """
-    Mark a task as completed
+    Close a task to denote completion
 
     Args:
-    - task_id (str): Task ID to complete
+    - task_id (str): Task ID to close
 
     Returns:
-        A string "Task completed"
+        A string "Task closed"
     """
     API = TodoistAPI(os.getenv("TODOIST_API_TOKEN"))
     API.close_task(task_id)
-    return "Task completed"
+    return "Task closed"
 
 
 def delete_task(task_id: str):
