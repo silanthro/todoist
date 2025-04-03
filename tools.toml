@@ -6,6 +6,6 @@ tools = [
     "todoist.create_task",
     "todoist.get_tasks",
     "todoist.update_task",
-    "todoist.complete_task",
+    "todoist.close_task",
     "todoist.delete_task",
 ]
