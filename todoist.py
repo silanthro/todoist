@@ -161,7 +161,7 @@ def update_task(
     return "Task updated"
 
 
-def complete_task(task_id: str) -> str:
+def close_task(task_id: str) -> str:
     """
     Mark a task as completed
 
